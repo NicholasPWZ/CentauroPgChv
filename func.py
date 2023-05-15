@@ -57,7 +57,7 @@ def get_produto(slug):
                 pass
             #Validando de a chave é existente
             try:
-                validar = dados_ofertas[sku]
+                validar = dados_ofertas[sku2]
             except:
                 continue
             dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
@@ -70,7 +70,7 @@ def get_produto(slug):
                 seller ,preco_de, preco_por, vezes_parcela, preco_parcela = 'SEM ESTOQUE', '-',  '-',  '-', '-'
             
             #Inserindo os dados de uma variação específica dentro de uma lista em formato de tupla.
-            lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por, dados_ofertas[i]["url"]))
+            lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por,dados_ofertas[i]["url"], preco_parcela, vezes_parcela))
     #Retornando as informações dos produtos e de suas variações      
     return lista_retorno
 

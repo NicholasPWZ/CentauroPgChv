@@ -14,8 +14,8 @@ for i in range(qtd):
     url_formatada = f'{url_separada[0]}{i}{url_separada[1]}'
     lista_data = func.get_produto(func.pg_chave(url_formatada))
     for r in lista_data:
-        sku,name,seller,cor,tamanho,preco, url = r
-        service.inserir(sku,name,seller,cor,tamanho,preco, url)
+        sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
+        service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
     
 
 
