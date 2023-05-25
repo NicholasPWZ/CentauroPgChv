@@ -35,17 +35,22 @@ def find_by():
     elif select == '4':
         text = input('Informe o ID a ser procurado: ')
         service.find_by_id(text)
-    
+
+def atualizar_produto():
+    id_prod = input("Informe o id do produto: ")
+    service.get_url(id_prod)
+
 #Menu roda até que o usuário decida quando parar
 while True:
-    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Finalizar programa: ')
+    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Finalizar programa: ')
     if action == '1':
         adc_pg_chv()
     elif action == '2':
         find_by()
     elif action == '3':
+        atualizar_produto()
+    elif action == '4':
         break
-
 
 
 
