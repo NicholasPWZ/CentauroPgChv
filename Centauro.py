@@ -10,16 +10,21 @@ def adc_pg_chv():
     #Solicitando a quantidade de páginas a serem adicionadas
     qtd = input('Informe a quantidade de páginas: ')
     qtd = int(qtd) + 1
-    url_separada = url.split('#1')
+    try:
+        url_separada = url.split('#1')
 
-    #Adicionando o número das páginas até o numero informado, e após isso inserindo cada tupla presente na lista dentro do banco de dados
-    for i in range(qtd):
-        url_formatada = f'{url_separada[0]}{i}{url_separada[1]}'
-        lista_data = func.get_produto(func.pg_chave(url_formatada))
+        #Adicionando o número das páginas até o numero informado, e após isso inserindo cada tupla presente na lista dentro do banco de dados
+        for i in range(qtd):
+            url_formatada = f'{url_separada[0]}{i}{url_separada[1]}'
+            lista_data = func.get_produto(func.pg_chave(url_formatada))
+            for r in lista_data:
+                sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
+                service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
+    except:
+        lista_data = func.get_produto(func.pg_chave(url))
         for r in lista_data:
             sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
             service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
-
 #Função para procurar um produto através de algum atributo
 def find_by():
     select = input('Selecione por qual atributo deseja procurar:\n1 - Por SKU\n2 - Por Nome\n3 - Por URL\n4 - Por ID: ')
@@ -38,11 +43,11 @@ def find_by():
 
 def atualizar_produto():
     id_prod = input("Informe o id do produto: ")
-    service.get_url(id_prod)
+    service.att_prod(id_prod)
 
 #Menu roda até que o usuário decida quando parar
 while True:
-    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Finalizar programa: ')
+    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Atualizar todos\n5 - Finalizar programa: ')
     if action == '1':
         adc_pg_chv()
     elif action == '2':
@@ -50,7 +55,8 @@ while True:
     elif action == '3':
         atualizar_produto()
     elif action == '4':
+        service.att_all_ids()
+    elif action == '5':
         break
-
 
 

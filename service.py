@@ -51,13 +51,12 @@ def find_by_id(num):
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM products where id = '{num}' ")
     #Transformando o retorno do select em linhas para retornar em python
-    lines = cursor.fetchall()
-    for i in lines:
-        print(i)
+    line = cursor.fetchall()
+    print(line)
     conn.commit()
     conn.close()
 
-def get_url(num):
+def att_prod(num):
     conn = sqlite3.connect('Centauro_db.db')
     cursor = conn.cursor()
     cursor.execute(f"SELECT url from products p where id = {num}")
@@ -74,6 +73,17 @@ def get_url(num):
     cursor.execute(f"UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
     conn.commit()
     conn.close()
+
+def att_all_ids():
+    conn = sqlite3.connect('Centauro_db.db')
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT id from products")
+    lista_ids = cursor.fetchall()
+    for i in lista_ids:
+        att_prod(i[0])
+    
+    
+
     
 
 

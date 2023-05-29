@@ -84,11 +84,11 @@ def get_produto(slug):
             dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
 
         for i in dados_ofertas:
-            nome, cor, tamanho = dados_ofertas[i]['nome'], dados_ofertas[i]['cor'], dados_ofertas[i]['tamanho'] 
+            sku, nome, cor, tamanho =i, dados_ofertas[i]['nome'], dados_ofertas[i]['cor'], dados_ofertas[i]['tamanho'] 
             try:
                 seller ,preco_de, preco_por, vezes_parcela, preco_parcela = dados_ofertas[i]['vendidoPor'] , dados_ofertas[i]['precoDe'],dados_ofertas[i]['precoPor'], dados_ofertas[i]['vezesParcela'], dados_ofertas[i]['precoParcela']
             except:
-                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = 'SEM ESTOQUE', '-',  '-',  '-', '-'
+                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = ' ', '-',  '-',  '-', '-'
             
             #Inserindo os dados de uma variação específica dentro de uma lista em formato de tupla.
             lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por,dados_ofertas[i]["url"], preco_parcela, vezes_parcela))
