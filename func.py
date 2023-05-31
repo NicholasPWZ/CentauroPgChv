@@ -9,7 +9,6 @@ header = {
     "authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGlnYXRld2F5LmRjLnNibmV0Iiwic3ViIjoid3d3LmNlbnRhdXJvLmNvbS5iciIsImlhdCI6MTUxNjIzOTAyMiwiY2xpZW50X2lkIjoiZTU3Nzk3ZDYtN2Y3Mi00MzMwLWJjOTItOTM3MWRiNjI0YjQ5In0.Mc2PpOJwltFymE3He95TpGTBPDAbhmxNw-cJEsYTghnGefWwhyiD--EopZquF2uH0bdF7K95SkK5RNaZ05Mh3ShuTbqPtD8D7kSr_zQO80nAyIHleLwQzrqrn5GF9piwVSt7YfVDWxj8rNA5HlXQpdTuu0vEUjHQk4hpapB8MtmE1qg9-bymyhD4Hm7x2XHMa-4AtPxhBotPBUwQKWNTbh3OUbCAETknA2tnwfFCSSS3nXot6Icuwx3hvtnkFTk3XitjPwLZ8xTlIJ5Uyk8MjjdG-poMFHKLrdvF7YzhAHUoNn-9Y91jIaYrSA_hDjgb-1y25Jw7UR_lO5F3ceSimg",
     "if-modified-since": "Fri, 19 May 2023 14:09:17 GMT",
     "origin": "https://www.centauro.com.br",
-    "referer": "https://www.centauro.com.br/tenis-nike-revolution-6-masculino-968314.html",
     "sec-ch-ua": "\"Google Chrome\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\"",
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"Windows\"",
@@ -88,7 +87,7 @@ def get_produto(slug):
             try:
                 seller ,preco_de, preco_por, vezes_parcela, preco_parcela = dados_ofertas[i]['vendidoPor'] , dados_ofertas[i]['precoDe'],dados_ofertas[i]['precoPor'], dados_ofertas[i]['vezesParcela'], dados_ofertas[i]['precoParcela']
             except:
-                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = ' ', '-',  '-',  '-', '-'
+                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = '-', '-',  '-',  '-', '-'
             
             #Inserindo os dados de uma variação específica dentro de uma lista em formato de tupla.
             lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por,dados_ofertas[i]["url"], preco_parcela, vezes_parcela))
@@ -118,7 +117,7 @@ def att_info(url, sku):
             break
         else:
            preco_de, preco_por, seller, preco_parcela, vezes_parcela = '0,00', '0,00', '-', '0,00', '0'
-    return nome, preco_de, preco_por, seller, preco_parcela, vezes_parcela
+    return nome, preco_por, seller, preco_parcela, vezes_parcela
 
 
 

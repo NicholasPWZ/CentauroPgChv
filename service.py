@@ -67,10 +67,15 @@ def att_prod(num):
     sku = cursor.fetchall()
     cursor.close()
     lista_att = func.att_info(line[0][0], sku[0][0])
-    nome,  preco_por, seller, preco_parcela, vezes_parcela = lista_att[0], lista_att[2], lista_att[3], lista_att[4], lista_att[5]
+    nome,  preco_por, seller, preco_parcela, vezes_parcela = lista_att[0], lista_att[1], lista_att[2], lista_att[3], lista_att[4]
     preco_por, preco_parcela = preco_por.replace(',','.'), preco_parcela.replace(',', '.')
+    if "'" in seller:
+        seller = seller.replace("'","")
     cursor = conn.cursor()
-    cursor.execute(f"UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
+    try:
+        cursor.execute(f"UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
+    except:
+        print(f"ERRO = UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
     conn.commit()
     conn.close()
 
