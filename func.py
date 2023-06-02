@@ -43,7 +43,7 @@ def get_produto(slug):
     #Iteração da lista que foi retornada na função anterior de páginas chave
     url = f'https://apigateway.centauro.com.br/ecommerce/v4.3/produtos?codigoModelo={slug}'
     try:
-        json = requests.get(url).json()
+        json = requests.get(url, headers=header).json()
     except:
         pass
     #Criando o dicionário que irá armazenar temporáriamente os dados dos produtos através de código SKU
@@ -53,7 +53,10 @@ def get_produto(slug):
         nome_produto = json['informacoes']['nome']
     except:
         pass
-    lista_cores = json['disponibilidade']['cores']
+    try:
+        lista_cores = json['disponibilidade']['cores']
+    except:
+        print(json)
     for p in lista_cores:
         cor = p['nomeCor']
         lista_tamanhos = p['todosTamanhos']
@@ -172,5 +175,5 @@ def to_xml(url):
         elemento = ET.SubElement(root, chave)
         elemento.text = str(valor)
     string_xml = ET.tostring(root, encoding='unicode')
-    print(string_xml)
+    return string_xml
         

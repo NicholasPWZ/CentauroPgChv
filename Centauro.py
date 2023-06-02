@@ -12,16 +12,23 @@ def adc_pg_chv():
     qtd = int(qtd) + 1
     try:
         url_separada = url.split('#1')
+        lista_data = []
 
         #Adicionando o número das páginas até o numero informado, e após isso inserindo cada tupla presente na lista dentro do banco de dados
         for i in range(qtd):
             url_formatada = f'{url_separada[0]}{i}{url_separada[1]}'
-            lista_data = func.get_produto(func.pg_chave(url_formatada))
+            slug = func.pg_chave(url_formatada)
+            if isinstance(slug, list):
+                for x in slug:
+                    lista_data.append(func.get_produto(x))
+            else:
+                lista_data = func.get_produto(slug)
             for r in lista_data:
                 sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
                 service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
     except:
-        lista_data = func.get_produto(func.pg_chave(url))
+        lista_data = []
+        lista_data.append(func.get_produto(func.pg_chave(url)))
         for r in lista_data:
             sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
             service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
@@ -52,7 +59,8 @@ def capt_dicionario():
 
 def capt_xml():
     url = input('Informe a url da oferta: ')
-    func.to_xml(url)
+    resultado = func.to_xml(url)
+    print(resultado)
 
 
 #Menu roda até que o usuário decida quando parar
