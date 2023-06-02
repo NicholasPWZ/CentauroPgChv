@@ -43,11 +43,21 @@ def find_by():
 
 def atualizar_produto():
     id_prod = input("Informe o id do produto: ")
-    service.att_prod(id_prod)
+    func.att_info(id_prod)
+
+def capt_dicionario():
+    url = input('Informe a url da oferta: ')
+    resultado = func.get_diction(url)
+    print(resultado)
+
+def capt_xml():
+    url = input('Informe a url da oferta: ')
+    func.to_xml(url)
+
 
 #Menu roda até que o usuário decida quando parar
 while True:
-    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Atualizar todos\n5 - Finalizar programa: ')
+    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Atualizar todos\n5 - Dicionario oferta\n6 - XML\n9 - Finalizar programa: ')
     if action == '1':
         adc_pg_chv()
     elif action == '2':
@@ -57,6 +67,10 @@ while True:
     elif action == '4':
         service.att_all_ids()
     elif action == '5':
+        capt_dicionario()
+    elif action == '6':
+        capt_xml()
+    elif action == '9':
         break
 
 

@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup as bs
 import requests
 import service
+import xml.etree.ElementTree as ET
 
 header = {
     "accept": "application/json, text/plain, */*",
@@ -40,61 +41,61 @@ def get_produto(slug):
     #Criando a lista que irá retornar as informações dos produtos
     lista_retorno = []
     #Iteração da lista que foi retornada na função anterior de páginas chave
-    for a in slug:
-        url = f'https://apigateway.centauro.com.br/ecommerce/v4.3/produtos?codigoModelo={a}'
+    url = f'https://apigateway.centauro.com.br/ecommerce/v4.3/produtos?codigoModelo={slug}'
+    try:
+        json = requests.get(url).json()
+    except:
+        pass
+    #Criando o dicionário que irá armazenar temporáriamente os dados dos produtos através de código SKU
+    dados_ofertas = {}
+    #Criando variáveis e atribuindo valores que estão presentes no json da página do produto
+    try:
+        nome_produto = json['informacoes']['nome']
+    except:
+        pass
+    lista_cores = json['disponibilidade']['cores']
+    for p in lista_cores:
+        cor = p['nomeCor']
+        lista_tamanhos = p['todosTamanhos']
+        for x in lista_tamanhos:
+            tamanho, sku, disponibilidade = x['tamanho'], x['sku'], x['stiuacao']
+            dados_ofertas[sku] = {}
+            dados_ofertas[sku]['url'] = f'https://www.centauro.com.br{slug}'
+            dados_ofertas[sku]['nome'], dados_ofertas[sku]['tamanho'], dados_ofertas[sku]['cor'], dados_ofertas[sku]['disponibilidade'] = nome_produto, tamanho, cor, disponibilidade 
+    lista_precos = json['precos']
+    for i in lista_precos:
+        sku2, preco_de, preco_por = i['sku'], i['valorDe'], i['valor']
+        
         try:
-            json = requests.get(url).json()
+            seller = i['nomeSeller']
+        except:
+            seller = '-'
+        try:
+            vezes_parcela, preco_parcela = i['numeroDeParcelas'], i['quantidadePorParcela']
+        except:
+            pass
+        #Validando se a chave é existente
+        try:
+            validar = dados_ofertas[sku2]
         except:
             continue
-        #Criando o dicionário que irá armazenar temporáriamente os dados dos produtos através de código SKU
-        dados_ofertas = {}
-        #Criando variáveis e atribuindo valores que estão presentes no json da página do produto
+        dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
+
+    for i in dados_ofertas:
+        sku, nome, cor, tamanho =i, dados_ofertas[i]['nome'], dados_ofertas[i]['cor'], dados_ofertas[i]['tamanho'] 
         try:
-            nome_produto = json['informacoes']['nome']
+            seller ,preco_de, preco_por, vezes_parcela, preco_parcela = dados_ofertas[i]['vendidoPor'] , dados_ofertas[i]['precoDe'],dados_ofertas[i]['precoPor'], dados_ofertas[i]['vezesParcela'], dados_ofertas[i]['precoParcela']
         except:
-            continue
-        lista_cores = json['disponibilidade']['cores']
-        for p in lista_cores:
-            cor = p['nomeCor']
-            lista_tamanhos = p['todosTamanhos']
-            for x in lista_tamanhos:
-                tamanho, sku, disponibilidade = x['tamanho'], x['sku'], x['stiuacao']
-                dados_ofertas[sku] = {}
-                dados_ofertas[sku]['url'] = f'https://www.centauro.com.br{a}'
-                dados_ofertas[sku]['nome'], dados_ofertas[sku]['tamanho'], dados_ofertas[sku]['cor'], dados_ofertas[sku]['disponibilidade'] = nome_produto, tamanho, cor, disponibilidade 
-
-        lista_precos = json['precos']
-        for i in lista_precos:
-            sku2, preco_de, preco_por = i['sku'], i['valorDe'], i['valor']
-            
-            try:
-                seller = i['nomeSeller']
-            except:
-                seller = 'CENTAURO'
-            try:
-                vezes_parcela, preco_parcela = i['numeroDeParcelas'], i['quantidadePorParcela']
-            except:
-                pass
-            #Validando de a chave é existente
-            try:
-                validar = dados_ofertas[sku2]
-            except:
-                continue
-            dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
-
-        for i in dados_ofertas:
-            sku, nome, cor, tamanho =i, dados_ofertas[i]['nome'], dados_ofertas[i]['cor'], dados_ofertas[i]['tamanho'] 
-            try:
-                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = dados_ofertas[i]['vendidoPor'] , dados_ofertas[i]['precoDe'],dados_ofertas[i]['precoPor'], dados_ofertas[i]['vezesParcela'], dados_ofertas[i]['precoParcela']
-            except:
-                seller ,preco_de, preco_por, vezes_parcela, preco_parcela = '-', '-',  '-',  '-', '-'
-            
-            #Inserindo os dados de uma variação específica dentro de uma lista em formato de tupla.
-            lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por,dados_ofertas[i]["url"], preco_parcela, vezes_parcela))
+            seller ,preco_de, preco_por, vezes_parcela, preco_parcela = '-', '-',  '-',  '-', '-'
+        
+        #Inserindo os dados de uma variação específica dentro de uma lista em formato de tupla.
+        lista_retorno.append((sku ,nome, seller, cor, tamanho, preco_por,dados_ofertas[i]["url"], preco_parcela, vezes_parcela))
     #Retornando as informações dos produtos e de suas variações      
     return lista_retorno
 
-def att_info(url, sku):
+def att_info(num):
+    params = service.get_urlsku(num)
+    url, sku = params[0], params[1]
     url = url.replace('https://www.centauro.com.br', '')
     link = f'https://apigateway.centauro.com.br/ecommerce/v4.3/produtos?codigoModelo={url}'
     json = requests.get(link).json()
@@ -117,8 +118,59 @@ def att_info(url, sku):
             break
         else:
            preco_de, preco_por, seller, preco_parcela, vezes_parcela = '0,00', '0,00', '-', '0,00', '0'
-    return nome, preco_por, seller, preco_parcela, vezes_parcela
+    service.att_data((nome, preco_por, seller, preco_parcela, vezes_parcela, num))
 
 
+def get_diction(slug):
+    if 'https://www.centauro.com.br' in slug:
+        slug = slug.replace('https://www.centauro.com.br', '')
+    url = f'https://apigateway.centauro.com.br/ecommerce/v4.3/produtos?codigoModelo={slug}'
+    try:
+        json = requests.get(url).json()
+    except:
+        pass
+    #Criando o dicionário que irá armazenar temporáriamente os dados dos produtos através de código SKU
+    dados_ofertas = {}
+    #Criando variáveis e atribuindo valores que estão presentes no json da página do produto
+    try:
+        nome_produto = json['informacoes']['nome']
+    except:
+        pass
+    lista_cores = json['disponibilidade']['cores']
+    for p in lista_cores:
+        cor = p['nomeCor']
+        lista_tamanhos = p['todosTamanhos']
+        for x in lista_tamanhos:
+            tamanho, sku, disponibilidade = x['tamanho'], x['sku'], x['stiuacao']
+            dados_ofertas[sku] = {}
+            dados_ofertas[sku]['url'] = f'https://www.centauro.com.br{slug}'
+            dados_ofertas[sku]['nome'], dados_ofertas[sku]['tamanho'], dados_ofertas[sku]['cor'], dados_ofertas[sku]['disponibilidade'],  dados_ofertas[sku]['sku'] = nome_produto, tamanho, cor, disponibilidade, sku 
+    lista_precos = json['precos']
+    for i in lista_precos:
+        sku2, preco_de, preco_por = i['sku'], i['valorDe'], i['valor']
+        
+        try:
+            seller = i['nomeSeller']
+        except:
+            seller = '-'
+        try:
+            vezes_parcela, preco_parcela = i['numeroDeParcelas'], i['quantidadePorParcela']
+        except:
+            pass
+        #Validando se a chave é existente
+        try:
+            validar = dados_ofertas[sku2]
+        except:
+            continue
+        dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
+    return dados_ofertas
 
-    
+def to_xml(url):
+    data_dict = get_diction(url)
+    root = ET.Element('produto')
+    for chave, valor in data_dict.items():
+        elemento = ET.SubElement(root, chave)
+        elemento.text = str(valor)
+    string_xml = ET.tostring(root, encoding='unicode')
+    print(string_xml)
+        

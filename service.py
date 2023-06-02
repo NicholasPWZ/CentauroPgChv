@@ -56,7 +56,7 @@ def find_by_id(num):
     conn.commit()
     conn.close()
 
-def att_prod(num):
+def get_urlsku(num):
     conn = sqlite3.connect('Centauro_db.db')
     cursor = conn.cursor()
     cursor.execute(f"SELECT url from products p where id = {num}")
@@ -66,16 +66,16 @@ def att_prod(num):
     cursor.execute(f"SELECT sku from products p where id = {num}")
     sku = cursor.fetchall()
     cursor.close()
-    lista_att = func.att_info(line[0][0], sku[0][0])
-    nome,  preco_por, seller, preco_parcela, vezes_parcela = lista_att[0], lista_att[1], lista_att[2], lista_att[3], lista_att[4]
+    return line[0][0], sku[0][0]
+    
+def att_data(lista_att):
+    conn = sqlite3.connect('Centauro_db.db')
+    nome,  preco_por, seller, preco_parcela, vezes_parcela, num = lista_att[0], lista_att[1], lista_att[2], lista_att[3], lista_att[4], lista_att[5]
     preco_por, preco_parcela = preco_por.replace(',','.'), preco_parcela.replace(',', '.')
     if "'" in seller:
         seller = seller.replace("'","")
     cursor = conn.cursor()
-    try:
-        cursor.execute(f"UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
-    except:
-        print(f"ERRO = UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
+    cursor.execute(f"UPDATE products SET nome ='{nome}', preco = {float(preco_por)}, seller = '{seller}', vezes_parcela = {vezes_parcela}, preco_parcela = {float(preco_parcela)} WHERE id ={num}")
     conn.commit()
     conn.close()
 
@@ -85,7 +85,7 @@ def att_all_ids():
     cursor.execute(f"SELECT id from products")
     lista_ids = cursor.fetchall()
     for i in lista_ids:
-        att_prod(i[0])
+        func.att_info(i[0])
     
     
 
