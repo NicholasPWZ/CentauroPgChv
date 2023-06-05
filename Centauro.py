@@ -10,7 +10,7 @@ def adc_pg_chv():
     #Solicitando a quantidade de páginas a serem adicionadas
     qtd = input('Informe a quantidade de páginas: ')
     qtd = int(qtd) + 1
-    try:
+    if '#1' in url:
         url_separada = url.split('#1')
         lista_data = []
 
@@ -18,17 +18,17 @@ def adc_pg_chv():
         for i in range(qtd):
             url_formatada = f'{url_separada[0]}{i}{url_separada[1]}'
             slug = func.pg_chave(url_formatada)
-            if isinstance(slug, list):
-                for x in slug:
-                    lista_data.append(func.get_produto(x))
-            else:
-                lista_data = func.get_produto(slug)
+            for x in slug:
+                lista_data +=(func.get_produto(x))
             for r in lista_data:
-                sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
+                
+                sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r   
                 service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
-    except:
+    else:
         lista_data = []
-        lista_data.append(func.get_produto(func.pg_chave(url)))
+        slug = func.pg_chave(url)
+        for i in slug:
+            lista_data += (func.get_produto(i))
         for r in lista_data:
             sku,name,seller,cor,tamanho,preco, url, parcela, vezes = r
             service.inserir(sku,name,seller,cor,tamanho,preco, url, parcela, vezes)
@@ -62,10 +62,14 @@ def capt_xml():
     resultado = func.to_xml(url)
     print(resultado)
 
+def capt_xml_ordenado():
+    url = input('Informe a url da oferta: ')
+    resultado = func.to_xml_ordem(url)
+    print(resultado)
 
 #Menu roda até que o usuário decida quando parar
 while True:
-    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Atualizar todos\n5 - Dicionario oferta\n6 - XML\n9 - Finalizar programa: ')
+    action = input('Selecione oq deseja fazer:\n1 - Adicionar pagina chave\n2 - Procurar por um produto especifico\n3 - Atualizar informação por ID\n4 - Atualizar todos\n5 - Dicionario oferta\n6 - XML\n7 - XML(Apenas buybox)\n9 - Finalizar programa: ')
     if action == '1':
         adc_pg_chv()
     elif action == '2':
@@ -78,6 +82,8 @@ while True:
         capt_dicionario()
     elif action == '6':
         capt_xml()
+    elif action == '7':
+        capt_xml_ordenado()
     elif action == '9':
         break
 

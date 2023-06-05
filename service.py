@@ -7,8 +7,13 @@ import func
 def inserir(sku,name,seller,cor,tamanho, preco, url, parcela, vezes):
     conn = sqlite3.connect('Centauro_db.db')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO products (sku, nome, seller, cor, tamanho, preco, url, vezes_parcela, preco_parcela) VALUES (?,?, ?, ?, ?, ?,?,?,?)"
-                   , (f'{sku}', f'{name}',f'{seller}',f'{cor}',f'{tamanho}', f'{preco}', f'{url}', f'{vezes}', f'{parcela}'))
+    cursor.execute(f"SELECT * FROM products where sku = '{sku}'")
+    conf_exist = cursor.fetchone()
+    if conf_exist:
+        pass
+    else:
+        cursor.execute("INSERT INTO products (sku, nome, seller, cor, tamanho, preco, url, vezes_parcela, preco_parcela) VALUES (?,?, ?, ?, ?, ?,?,?,?)"
+                    , (f'{sku}', f'{name}',f'{seller}',f'{cor}',f'{tamanho}', f'{preco}', f'{url}', f'{vezes}', f'{parcela}'))
     conn.commit()
     conn.close()
 
