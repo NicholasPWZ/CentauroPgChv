@@ -211,31 +211,35 @@ def get_diction_ordem(slug):
         cor = p['nomeCor']
         lista_tamanhos = p['tamanhosDisponiveis']
         for x in lista_tamanhos:
-            if x['ordem'] != 1:
+            validacao = x.get('ordem', None)
+            if validacao == 1 or validacao is None:
+                
+                tamanho, sku, disponibilidade = x['tamanho'], x['sku'], x['stiuacao']
+                dados_ofertas[sku] = {}
+                dados_ofertas[sku]['url'] = f'https://www.centauro.com.br{slug}'
+                dados_ofertas[sku]['nome'], dados_ofertas[sku]['tamanho'], dados_ofertas[sku]['cor'], dados_ofertas[sku]['disponibilidade'],  dados_ofertas[sku]['sku'] = nome_produto, tamanho, cor, disponibilidade, sku 
+        lista_precos = json['precos']
+        for i in lista_precos:
+            sku2, preco_de, preco_por = i['sku'], i['valorDe'], i['valor']
+            
+            validar_seller = json.get('tipo', None)
+            if validar_seller == 'BUYBOX' :
+                try:
+                    seller = i['nomeSeller']
+                except:
+                    seller = '-'
+            else:
+                seller = json['informacoes']['nomeSeller']
+            try:
+                vezes_parcela, preco_parcela = i['numeroDeParcelas'], i['quantidadePorParcela']
+            except:
+                pass
+            #Validando se a chave é existente
+            try:
+                validar = dados_ofertas[sku2]
+            except:
                 continue
-
-            tamanho, sku, disponibilidade = x['tamanho'], x['sku'], x['stiuacao']
-            dados_ofertas[sku] = {}
-            dados_ofertas[sku]['url'] = f'https://www.centauro.com.br{slug}'
-            dados_ofertas[sku]['nome'], dados_ofertas[sku]['tamanho'], dados_ofertas[sku]['cor'], dados_ofertas[sku]['disponibilidade'],  dados_ofertas[sku]['sku'] = nome_produto, tamanho, cor, disponibilidade, sku 
-    lista_precos = json['precos']
-    for i in lista_precos:
-        sku2, preco_de, preco_por = i['sku'], i['valorDe'], i['valor']
-        
-        try:
-            seller = i['nomeSeller']
-        except:
-            seller = '-'
-        try:
-            vezes_parcela, preco_parcela = i['numeroDeParcelas'], i['quantidadePorParcela']
-        except:
-            pass
-        #Validando se a chave é existente
-        try:
-            validar = dados_ofertas[sku2]
-        except:
-            continue
-        dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
+            dados_ofertas[sku2]['precoDe'], dados_ofertas[sku2]['precoPor'], dados_ofertas[sku2]['vendidoPor'], dados_ofertas[sku2]['vezesParcela'], dados_ofertas[sku2]['precoParcela'] = preco_de, preco_por, seller, vezes_parcela, preco_parcela
     return dados_ofertas
 
 

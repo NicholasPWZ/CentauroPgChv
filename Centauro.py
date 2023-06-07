@@ -66,6 +66,8 @@ def capt_xml_ordenado():
     url = input('Informe a url da oferta: ')
     resultado = func.to_xml_ordem(url)
     print(resultado)
+    with open("centauro.xml", "wb") as f:
+        f.write(resultado.encode('utf-8'))
 
 #Menu roda até que o usuário decida quando parar
 while True:
@@ -86,5 +88,4 @@ while True:
         capt_xml_ordenado()
     elif action == '9':
         break
-
 
